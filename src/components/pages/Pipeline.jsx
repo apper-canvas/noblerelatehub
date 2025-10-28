@@ -171,7 +171,7 @@ const [deals, setDeals] = useState([]);
 actionLabel="Add Deal"
           onAction={handleAddDeal}
         />
-      ) : (
+) : (
         <div className="overflow-x-auto">
           <div className="flex gap-6 pb-4 min-w-max">
             {stages.map((stage) => {
@@ -221,7 +221,6 @@ actionLabel="Add Deal"
               );
             })}
           </div>
-</div>
         </div>
       )}
 
@@ -230,8 +229,9 @@ actionLabel="Add Deal"
         onClose={() => setIsQuickAddOpen(false)}
         activeTab="deal"
         onSuccess={handleDealCreated}
-      />
+/>
     </div>
   );
+};
 
 export default Pipeline;
