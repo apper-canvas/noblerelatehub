@@ -20,8 +20,8 @@ const [deals, setDeals] = useState([]);
     setIsQuickAddOpen(true);
   };
 
-  const handleDealCreated = async () => {
-    await loadDeals();
+const handleDealCreated = async () => {
+    await loadPipelineData();
   };
 
   const stages = [
