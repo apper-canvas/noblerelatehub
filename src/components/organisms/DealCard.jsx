@@ -1,14 +1,8 @@
-import { useState } from "react";
-import { useDrag } from "react-dnd";
 import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
-import Button from "@/components/atoms/Button";
-import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/utils/cn";
 
 const DealCard = ({ deal, contact, onEdit, onDelete }) => {
-  const [isDragging, setIsDragging] = useState(false);
-
   const getProbabilityColor = (probability) => {
     if (probability >= 75) return "border-l-success bg-success/5";
     if (probability >= 50) return "border-l-warning bg-warning/5";
@@ -29,23 +23,11 @@ const DealCard = ({ deal, contact, onEdit, onDelete }) => {
     (new Date() - new Date(deal.stageChangedAt)) / (1000 * 60 * 60 * 24)
   );
 
-  const [{ isDragActive }, drag] = useDrag(() => ({
-    type: "deal",
-    item: { deal },
-    collect: (monitor) => ({
-      isDragActive: monitor.isDragging(),
-    }),
-    begin: () => setIsDragging(true),
-    end: () => setIsDragging(false),
-  }));
-
-  return (
+return (
     <div
-      ref={drag}
       className={cn(
-        "bg-white rounded-lg p-4 card-shadow hover:card-shadow-hover transition-all duration-200 cursor-move border-l-4",
-        getProbabilityColor(deal.probability),
-        isDragActive && "opacity-50 transform rotate-1"
+        "bg-white rounded-lg p-4 card-shadow hover:card-shadow-hover transition-all duration-200 border-l-4",
+        getProbabilityColor(deal.probability)
       )}
     >
       {/* Header */}
@@ -107,12 +89,7 @@ const DealCard = ({ deal, contact, onEdit, onDelete }) => {
         <p className="text-sm text-slate-600 mt-2 line-clamp-2">
           {deal.notes}
         </p>
-      )}
-
-      {/* Drag Handle */}
-      <div className="flex items-center justify-center mt-3 pt-2 border-t border-slate-100">
-        <ApperIcon name="GripVertical" className="w-4 h-4 text-slate-300" />
-      </div>
+)}
     </div>
   );
 };
