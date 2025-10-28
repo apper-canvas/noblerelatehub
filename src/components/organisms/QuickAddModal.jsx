@@ -1,16 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { activityService, contactService, dealService } from "@/services/api/dataService";
+import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import FormField from "@/components/molecules/FormField";
-import { contactService, dealService, activityService } from "@/services/api/dataService";
-import { toast } from "react-toastify";
 
-const QuickAddModal = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState("contact");
+const QuickAddModal = ({ isOpen, onClose, activeTab: initialActiveTab = "contact", onSuccess }) => {
+  const [activeTab, setActiveTab] = useState(initialActiveTab);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
   const [contactForm, setContactForm] = useState({
     firstName: "",
     lastName: "",
@@ -74,12 +73,12 @@ const QuickAddModal = ({ isOpen, onClose }) => {
           probability: parseInt(dealForm.probability)
         });
         toast.success("Deal created successfully!");
-      } else if (activeTab === "activity") {
+} else if (activeTab === "activity") {
         await activityService.create(activityForm);
         toast.success("Activity logged successfully!");
       }
-      
       resetForms();
+      if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
       toast.error("Failed to create item. Please try again.");

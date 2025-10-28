@@ -1,18 +1,28 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { contactService, dealService } from "@/services/api/dataService";
+import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
+import QuickAddModal from "@/components/organisms/QuickAddModal";
 import DealCard from "@/components/organisms/DealCard";
 import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import { dealService, contactService } from "@/services/api/dataService";
-import { toast } from "react-toastify";
+import Error from "@/components/ui/Error";
 
 const Pipeline = () => {
-  const [deals, setDeals] = useState([]);
+const [deals, setDeals] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+
+  const handleAddDeal = () => {
+    setIsQuickAddOpen(true);
+  };
+
+  const handleDealCreated = async () => {
+    await loadDeals();
+  };
 
   const stages = [
     { id: "Lead", name: "Lead", color: "bg-slate-100" },
@@ -126,7 +136,7 @@ const Pipeline = () => {
           <h1 className="text-3xl font-bold text-slate-900">Pipeline</h1>
           <p className="text-slate-600 mt-2">Track deals through your sales process</p>
         </div>
-        <Button className="flex items-center gap-2">
+<Button onClick={handleAddDeal} className="flex items-center gap-2">
           <ApperIcon name="Plus" className="w-4 h-4" />
           Add Deal
         </Button>
@@ -158,8 +168,8 @@ const Pipeline = () => {
           icon="Target"
           title="No deals found"
           description="Start tracking your sales opportunities by adding your first deal."
-          actionLabel="Add Deal"
-          onAction={() => console.log("Add deal")}
+actionLabel="Add Deal"
+          onAction={handleAddDeal}
         />
       ) : (
         <div className="overflow-x-auto">
@@ -211,10 +221,17 @@ const Pipeline = () => {
               );
             })}
           </div>
+</div>
         </div>
       )}
+
+      <QuickAddModal 
+        isOpen={isQuickAddOpen}
+        onClose={() => setIsQuickAddOpen(false)}
+        activeTab="deal"
+        onSuccess={handleDealCreated}
+      />
     </div>
   );
-};
 
 export default Pipeline;
