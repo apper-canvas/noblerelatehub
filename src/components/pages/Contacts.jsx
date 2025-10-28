@@ -4,6 +4,7 @@ import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import SearchBar from "@/components/molecules/SearchBar";
 import ContactDetail from "@/components/organisms/ContactDetail";
+import QuickAddModal from "@/components/organisms/QuickAddModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -17,9 +18,19 @@ const Contacts = () => {
   const [error, setError] = useState("");
   const [selectedContact, setSelectedContact] = useState(null);
   const [showContactDetail, setShowContactDetail] = useState(false);
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [sortBy, setSortBy] = useState("name");
   const [filterBy, setFilterBy] = useState("all");
 
+  const handleAddContact = () => {
+    setShowQuickAdd(true);
+  };
+
+  const handleCloseQuickAdd = async () => {
+    setShowQuickAdd(false);
+    // Reload contacts after modal closes to show newly created contact
+    await loadContacts();
+  };
   useEffect(() => {
     loadContacts();
   }, []);
@@ -127,7 +138,7 @@ const Contacts = () => {
           <h1 className="text-3xl font-bold text-slate-900">Contacts</h1>
           <p className="text-slate-600 mt-2">Manage your customer relationships</p>
         </div>
-        <Button className="flex items-center gap-2">
+<Button onClick={handleAddContact} className="flex items-center gap-2">
           <ApperIcon name="Plus" className="w-4 h-4" />
           Add Contact
         </Button>
@@ -167,13 +178,13 @@ const Contacts = () => {
       </div>
 
       {/* Contact List */}
-      {filteredContacts.length === 0 ? (
+{filteredContacts.length === 0 ? (
         <Empty
           icon="Users"
           title="No contacts found"
           description="Start building relationships by adding your first contact."
           actionLabel="Add Contact"
-          onAction={() => console.log("Add contact")}
+          onAction={handleAddContact}
         />
       ) : (
         <div className="bg-white rounded-lg card-shadow overflow-hidden">
@@ -265,11 +276,17 @@ const Contacts = () => {
         </div>
       )}
 
-      {/* Contact Detail Modal */}
+{/* Contact Detail Modal */}
       <ContactDetail
         isOpen={showContactDetail}
         onClose={() => setShowContactDetail(false)}
         contact={selectedContact}
+      />
+
+      {/* Quick Add Modal */}
+      <QuickAddModal
+        isOpen={showQuickAdd}
+        onClose={handleCloseQuickAdd}
       />
     </div>
   );
