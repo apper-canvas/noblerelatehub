@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { activityService, contactService, dealService } from "@/services/api/dataService";
+import { activityService, contactService, dealService, companyService } from "@/services/api/dataService";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
@@ -32,6 +32,15 @@ const QuickAddModal = ({ isOpen, onClose, activeTab: initialActiveTab = "contact
     type: "call",
     subject: "",
     description: ""
+});
+
+  const [companyForm, setCompanyForm] = useState({
+    Name: "",
+    Industry: "",
+    Website: "",
+    Size: "",
+    Revenue: "",
+    Status: "Active"
   });
 
   const resetForms = () => {
@@ -55,7 +64,15 @@ const QuickAddModal = ({ isOpen, onClose, activeTab: initialActiveTab = "contact
       type: "call",
       subject: "",
       description: ""
-    });
+});
+  };
+
+  const handleCompanyChange = (e) => {
+    const { name, value } = e.target;
+    setCompanyForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -75,6 +92,8 @@ const QuickAddModal = ({ isOpen, onClose, activeTab: initialActiveTab = "contact
         toast.success("Deal created successfully!");
 } else if (activeTab === "activity") {
         await activityService.create(activityForm);
+      } else if (activeTab === "company") {
+        await companyService.create(companyForm);
         toast.success("Activity logged successfully!");
       }
       resetForms();
@@ -90,7 +109,8 @@ const QuickAddModal = ({ isOpen, onClose, activeTab: initialActiveTab = "contact
   const tabs = [
     { id: "contact", label: "Contact", icon: "User" },
     { id: "deal", label: "Deal", icon: "DollarSign" },
-    { id: "activity", label: "Activity", icon: "Calendar" }
+{ id: "activity", label: "Activity", icon: "Calendar" },
+    { id: "company", label: "Company", icon: "Building2" }
   ];
 
 if (!isOpen) return null;
@@ -306,8 +326,69 @@ if (!isOpen) return null;
                           />
                         </FormField>
                       </>
-                    )}
+)}
 
+                    {/* Company Form */}
+                    {activeTab === "company" && (
+                      <div className="space-y-4">
+                        <FormField
+                          label="Company Name"
+                          name="Name"
+                          value={companyForm.Name}
+                          onChange={handleCompanyChange}
+                          placeholder="Enter company name"
+                          required
+                        />
+
+                        <FormField
+                          label="Industry"
+                          name="Industry"
+                          value={companyForm.Industry}
+                          onChange={handleCompanyChange}
+                          placeholder="e.g., Technology, Healthcare"
+                        />
+
+                        <FormField
+                          label="Website"
+                          name="Website"
+                          type="url"
+                          value={companyForm.Website}
+                          onChange={handleCompanyChange}
+                          placeholder="https://example.com"
+                        />
+
+                        <FormField
+                          label="Company Size"
+                          name="Size"
+                          value={companyForm.Size}
+                          onChange={handleCompanyChange}
+                          placeholder="e.g., 50-200 employees"
+                        />
+
+                        <FormField
+                          label="Annual Revenue"
+                          name="Revenue"
+                          value={companyForm.Revenue}
+                          onChange={handleCompanyChange}
+                          placeholder="e.g., $10M-$50M"
+                        />
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                            Status
+                          </label>
+                          <select
+                            name="Status"
+                            value={companyForm.Status}
+                            onChange={handleCompanyChange}
+                            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                          >
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                          </select>
+                        </div>
+                      </div>
+                    )}
                     {/* Actions */}
                     <div className="flex justify-end space-x-3 pt-4">
                       <Button

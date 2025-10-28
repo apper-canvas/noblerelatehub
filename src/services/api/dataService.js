@@ -1,6 +1,7 @@
 import contactsData from "@/services/mockData/contacts.json";
 import dealsData from "@/services/mockData/deals.json";
 import activitiesData from "@/services/mockData/activities.json";
+import companiesData from "@/services/mockData/companies.json";
 
 // Simulate API delay
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
@@ -63,6 +64,61 @@ export const contactService = {
       contact.company?.toLowerCase().includes(lowercaseQuery) ||
       contact.tags?.some(tag => tag.toLowerCase().includes(lowercaseQuery))
     );
+  }
+};
+
+// Company Service
+let companies = [...companiesData];
+let companyIdCounter = Math.max(...companies.map(c => c.Id)) + 1;
+
+export const companyService = {
+  getAll: async () => {
+    await delay(300);
+    return [...companies];
+  },
+
+  getById: async (id) => {
+    await delay(200);
+    const company = companies.find(c => c.Id === parseInt(id));
+    if (!company) {
+      throw new Error('Company not found');
+    }
+    return { ...company };
+  },
+
+  create: async (companyData) => {
+    await delay(400);
+    const newCompany = {
+      ...companyData,
+      Id: companyIdCounter++,
+      LastContact: new Date().toISOString()
+    };
+    companies.push(newCompany);
+    return { ...newCompany };
+  },
+
+  update: async (id, companyData) => {
+    await delay(400);
+    const index = companies.findIndex(c => c.Id === parseInt(id));
+    if (index === -1) {
+      throw new Error('Company not found');
+    }
+    companies[index] = {
+      ...companies[index],
+      ...companyData,
+      Id: parseInt(id)
+    };
+    return { ...companies[index] };
+  },
+
+  delete: async (id) => {
+    await delay(300);
+    const index = companies.findIndex(c => c.Id === parseInt(id));
+    if (index === -1) {
+      throw new Error('Company not found');
+    }
+    companies.splice(index, 1);
+    return { success: true };
   }
 };
 
